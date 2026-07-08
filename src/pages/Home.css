@@ -1,0 +1,191 @@
+.hero {
+  min-height: 100vh; display: flex; align-items: center; position: relative;
+  background-color: #0D0D0D; color: #fff; overflow: hidden; padding: 0 2rem;
+}
+
+.overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(229,57,53,0.12) 0%, transparent 30%, rgba(44,62,143,0.05) 60%, transparent 100%);
+  background-size: 200% 200%; background-position: 0% 50%;
+  pointer-events: none;
+}
+
+.decorBg {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+
+.decorRing1 {
+  position: absolute; top: 5%; right: 8%; width: 50vw; height: 50vw;
+  max-width: 700px; max-height: 700px;
+  border: 1px solid rgba(229,57,53,0.15); border-radius: 50%;
+}
+
+.decorRing2 {
+  position: absolute; top: 15%; right: 18%; width: 35vw; height: 35vw;
+  max-width: 500px; max-height: 500px;
+  border: 1px solid rgba(244,196,48,0.1); border-radius: 50%;
+}
+
+.decorRing3 {
+  position: absolute; bottom: 10%; left: 5%; width: 25vw; height: 25vw;
+  max-width: 380px; max-height: 380px;
+  border: 1px solid rgba(44,62,143,0.1); border-radius: 50%;
+}
+
+.decorSlash {
+  position: absolute; top: 0; right: 20%; width: 1px; height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(229,57,53,0.25), transparent);
+  transform: skewX(-18deg);
+}
+
+.connectorH {
+  position: absolute; top: 30%; left: 5%; width: 20%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(229,57,53,0.2));
+}
+
+.connectorV {
+  position: absolute; top: 20%; right: 30%; width: 1px; height: 25%;
+  background: linear-gradient(to bottom, transparent, rgba(244,196,48,0.2));
+}
+
+.connectorDiag {
+  position: absolute; top: 60%; left: 60%; width: 15%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(44,62,143,0.2));
+  transform: rotate(45deg);
+}
+
+.decorArt1 { position: absolute; right: -3%; top: 8%; opacity: 0.08; }
+.decorArt2 { position: absolute; left: -2%; bottom: 5%; opacity: 0.06; }
+.decorArt3 { position: absolute; right: 15%; bottom: 20%; opacity: 0.05; }
+
+.content {
+  position: relative; z-index: 1;
+  max-width: var(--container-max); margin: 0 auto; width: 100%;
+}
+
+.year {
+  font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.4em;
+  color: var(--color-red); margin-bottom: 1.5rem; text-transform: uppercase;
+}
+
+.title {
+  font-size: clamp(3rem, 10vw, 8rem); font-weight: 900; line-height: 0.92;
+  letter-spacing: -0.04em; text-transform: uppercase; margin-bottom: 1.5rem;
+  overflow: visible;
+}
+
+.subtitle {
+  font-family: var(--font-display); font-size: clamp(0.8rem, 2vw, 1.1rem);
+  font-weight: 500; letter-spacing: 0.18em; color: var(--color-red);
+  margin-bottom: 1.5rem; text-transform: uppercase;
+}
+
+.description {
+  font-family: var(--font-body); font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+  font-weight: 300; color: rgba(255,255,255,0.65); max-width: 520px;
+  line-height: 1.7; margin-bottom: 2.5rem; perspective: 800px;
+}
+
+.cta {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-family: var(--font-display); font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+  padding: 0.9rem 2rem;
+  background-color: var(--color-red); color: #fff;
+  border: 2px solid var(--color-red);
+  cursor: pointer; overflow: hidden;
+}
+
+.ctaText, .ctaArrow { position: relative; z-index: 1; }
+.ctaArrow { font-size: 1.1rem; line-height: 1; }
+
+.scrollIndicator {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+}
+
+.scrollText {
+  font-family: var(--font-body); font-size: 0.6rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+}
+
+.scrollLine {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--color-red), transparent);
+}
+
+/* Stats */
+.statsSection {
+  padding: 6rem 2rem; background-color: var(--bg-secondary); overflow: hidden;
+}
+
+.statsGrid {
+  max-width: var(--container-max); margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2.5rem;
+}
+
+.stat {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.5rem; position: relative;
+}
+
+.statBarWrap {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px; background-color: rgba(0,0,0,0.1);
+}
+
+.statBar {
+  height: 100%; background-color: var(--color-red);
+  transform-origin: bottom center;
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 900; color: var(--color-red); line-height: 1;
+}
+
+.statLabel {
+  font-family: var(--font-body); font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.12em;
+}
+
+/* Quote */
+.quoteSection {
+  padding: 8rem 2rem; background-color: var(--color-black);
+  color: #fff; text-align: center; position: relative; overflow: hidden;
+}
+
+.quoteRing {
+  position: absolute; top: 50%; left: 50%; width: 60vw; height: 60vw;
+  max-width: 800px; max-height: 800px; margin-top: -30vw; margin-left: -30vw;
+  border: 1px solid rgba(229,57,53,0.06); border-radius: 50%;
+  pointer-events: none;
+}
+
+.quoteInner { position: relative; max-width: 700px; margin: 0 auto; }
+
+.quoteSlash {
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 1px;
+  background-color: rgba(229,57,53,0.2);
+  transform: skewX(-15deg);
+}
+
+.quoteContent { padding: 0 1.5rem; position: relative; }
+
+.quoteMark {
+  font-family: var(--font-display); font-size: 4rem; line-height: 0.8;
+  color: var(--color-red); opacity: 0.3; display: block; margin-bottom: -0.5rem;
+}
+
+.quote {
+  font-family: var(--font-body); font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 300; font-style: italic; line-height: 1.5; margin: 1rem 0;
+}
+
+.quoteAuthor {
+  margin-top: 1.5rem; font-size: 0.85rem; font-weight: 600; font-style: normal;
+  color: var(--color-red); text-transform: uppercase; letter-spacing: 0.12em;
+}

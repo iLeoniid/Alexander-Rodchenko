@@ -48,9 +48,7 @@ export default function Gallery() {
         {galleryImages.map((item, i) => (
           <div key={item.title} style={styles.card} data-gallery-card data-hover>
             <div style={styles.imageWrap}>
-              <RodchenkoArt variant={(i % 7) + 1} size={400} interactive accentColor={
-                ['#E53935','#F4C430','#2C3E8F','#E67E22','#F5F0EB','#E53935','#2C3E8F'][i % 7]
-              } />
+              <RodchenkoArt variant={((i % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7} size={400} interactive accentColor="var(--color-accent)" />
             </div>
             <div style={styles.cardContent}>
               <h2 style={styles.cardTitle}>{item.title}</h2>

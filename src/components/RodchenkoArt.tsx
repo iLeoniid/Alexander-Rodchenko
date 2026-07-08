@@ -3,7 +3,7 @@ import { useReducedMotion } from '../hooks/useReducedMotion'
 import { artContexts } from '../data/content'
 
 interface Props {
-  variant?: number
+  variant?: 1 | 2 | 3 | 4 | 5 | 6 | 7
   size?: number
   interactive?: boolean
   accentColor?: string
@@ -12,34 +12,56 @@ interface Props {
 
 export default function RodchenkoArt({
   variant = 1, size = 400, interactive = false,
-  accentColor = '#E53935', showTooltip = false,
+  accentColor = 'var(--color-accent)', showTooltip = false,
 }: Props) {
   const clipId = useId().replace(/:/g, '')
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
   const reduced = useReducedMotion()
   const elRef = useRef<HTMLDivElement>(null)
+  const tooltipRef = useRef({ x: 0, y: 0 })
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
+  const rafRef = useRef(0)
 
   const ctx = artContexts[variant] || artContexts[1]
 
-  const onEnter = useCallback((e: React.MouseEvent) => {
+  const syncTooltip = useCallback(() => {
+    setTooltipPos({ x: tooltipRef.current.x, y: tooltipRef.current.y })
+  }, [])
+
+  const onEnter = useCallback((e: React.PointerEvent) => {
     if (!interactive) return
     setHovered(true)
-    if (showTooltip) setTooltipPos({ x: e.clientX, y: e.clientY })
-  }, [interactive, showTooltip])
+    if (showTooltip) {
+      tooltipRef.current = { x: e.clientX, y: e.clientY }
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = requestAnimationFrame(syncTooltip)
+    }
+  }, [interactive, showTooltip, syncTooltip])
 
   const onLeave = useCallback(() => {
     if (interactive) { setHovered(false); setClicked(false) }
+    cancelAnimationFrame(rafRef.current)
   }, [interactive])
 
   const onClick = useCallback(() => {
     if (interactive) setClicked(c => !c)
   }, [interactive])
 
-  const onMove = useCallback((e: React.MouseEvent) => {
-    if (showTooltip && hovered) setTooltipPos({ x: e.clientX, y: e.clientY })
-  }, [showTooltip, hovered])
+  const onMove = useCallback((e: React.PointerEvent) => {
+    if (!showTooltip || !hovered) return
+    tooltipRef.current = { x: e.clientX, y: e.clientY }
+    cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(syncTooltip)
+  }, [showTooltip, hovered, syncTooltip])
+
+  const onKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!interactive) return
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      setClicked(c => !c)
+    }
+  }, [interactive])
 
   const r = accentColor
   const w = '#F5F0EB'
@@ -131,7 +153,11 @@ export default function RodchenkoArt({
 
   return (
     <div ref={elRef} style={{ position: 'relative', display: 'inline-block' }}
-      onMouseEnter={onEnter} onMouseLeave={onLeave} onClick={onClick} onMouseMove={onMove}
+      onPointerEnter={onEnter} onPointerLeave={onLeave} onClick={onClick} onPointerMove={onMove}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      onKeyDown={interactive ? onKeyDown : undefined}
+      aria-label={interactive ? `Rodchenko art ${variant}` : undefined}
     >
       <div style={{
         display: 'block', willChange: hovered || clicked ? 'transform' : 'auto',

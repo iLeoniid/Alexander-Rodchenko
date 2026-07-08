@@ -2,6 +2,9 @@
   --color-red: #E53935;
   --color-red-dark: #C62828;
   --color-red-rgb: 229, 57, 53;
+  --color-accent: #E53935;
+  --color-accent-dark: #C62828;
+  --color-accent-rgb: 229, 57, 53;
   --color-black: #1A1A1A;
   --color-white: #FFFFFF;
   --color-off-white: #F5F0EB;
@@ -60,7 +63,7 @@ img {
 }
 
 ::selection {
-  background: var(--color-red);
+  background: var(--color-accent);
   color: #fff;
 }
 
@@ -145,17 +148,17 @@ img {
 }
 
 .btn--primary {
-  background: var(--color-red);
-  border-color: var(--color-red);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
   color: var(--color-white);
 }
 
 .btn--primary::before {
-  background: var(--color-red-dark);
+  background: var(--color-accent-dark);
 }
 
 .btn--primary:hover {
-  border-color: var(--color-red-dark);
+  border-color: var(--color-accent-dark);
 }
 
 .scale-150 {
@@ -170,6 +173,14 @@ img {
 
 [data-hover]:hover > div:last-child {
   height: 100% !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 768px) {

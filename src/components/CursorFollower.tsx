@@ -56,12 +56,12 @@ export default function CursorFollower() {
     <>
       <div ref={trailRef} aria-hidden="true" style={{
         position: 'fixed', top: 0, left: 0, width: '8px', height: '8px',
-        borderRadius: '50%', backgroundColor: 'var(--color-red)',
+        borderRadius: '50%', backgroundColor: 'var(--color-accent)',
         pointerEvents: 'none', zIndex: 9998, opacity: 0.2,
       }} />
       <div ref={cursorRef} aria-hidden="true" style={{
         position: 'fixed', top: 0, left: 0, width: '24px', height: '24px',
-        borderRadius: '50%', border: '2px solid var(--color-red)',
+        borderRadius: '50%', border: '2px solid var(--color-accent)',
         pointerEvents: 'none', zIndex: 9999, mixBlendMode: 'difference',
         willChange: 'transform',
       }} />

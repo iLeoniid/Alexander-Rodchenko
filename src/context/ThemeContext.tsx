@@ -16,6 +16,9 @@ interface ThemeContextValue {
   setFontSize: (s: FontSize) => void
 }
 
+const BRAND_RED = '#E53935'
+const BRAND_RED_DARK = '#C62828'
+
 const accents: Record<AccentColor, string> = {
   red: '#E53935',
   amarillo: '#F4C430',
@@ -30,6 +33,14 @@ const fontScale: Record<FontSize, number> = {
   grande: 1.125,
 }
 
+function darken(hex: string, amount: number): string {
+  const num = parseInt(hex.replace('#', ''), 16)
+  const r = Math.max(0, (num >> 16) - amount)
+  const g = Math.max(0, ((num >> 8) & 0x00FF) - amount)
+  const b = Math.max(0, (num & 0x0000FF) - amount)
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`
+}
+
 function getSystemMode(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'dark'
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -40,7 +51,11 @@ function getInitialTheme(): Theme {
     const stored = localStorage.getItem('rodchenko-theme')
     if (stored) {
       const parsed = JSON.parse(stored)
-      return { mode: getSystemMode(), accent: parsed.accent || 'red', fontSize: parsed.fontSize || 'medio' }
+      return {
+        mode: parsed.mode || getSystemMode(),
+        accent: parsed.accent || 'red',
+        fontSize: parsed.fontSize || 'medio',
+      }
     }
   } catch {}
   return { mode: getSystemMode(), accent: 'red', fontSize: 'medio' }
@@ -59,13 +74,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(getInitialTheme)
 
   useEffect(() => {
-    localStorage.setItem('rodchenko-theme', JSON.stringify({ accent: theme.accent, fontSize: theme.fontSize }))
+    localStorage.setItem('rodchenko-theme', JSON.stringify({
+      mode: theme.mode,
+      accent: theme.accent,
+      fontSize: theme.fontSize,
+    }))
     const root = document.documentElement
-    const accent = accents[theme.accent]
+    const accentHex = accents[theme.accent]
 
-    root.style.setProperty('--color-red', accent)
-    root.style.setProperty('--color-red-rgb', hexToRgba(accent))
-    root.style.setProperty('--color-red-dark', theme.accent === 'red' ? '#C62828' : accent)
+    root.style.setProperty('--color-red', BRAND_RED)
+    root.style.setProperty('--color-red-rgb', hexToRgba(BRAND_RED))
+    root.style.setProperty('--color-red-dark', BRAND_RED_DARK)
+
+    root.style.setProperty('--color-accent', accentHex)
+    root.style.setProperty('--color-accent-rgb', hexToRgba(accentHex))
+    root.style.setProperty('--color-accent-dark', darken(accentHex, 40))
 
     if (theme.mode === 'light') {
       root.style.setProperty('--color-black', '#1A1A1A')

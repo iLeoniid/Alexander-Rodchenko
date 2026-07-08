@@ -14,12 +14,16 @@
         try {
           var stored = JSON.parse(localStorage.getItem('rodchenko-theme'));
           if (stored && stored.accent) theme.accent = stored.accent;
+          if (stored && stored.mode) theme.mode = stored.mode;
         } catch(e) {}
-        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        theme.mode = dark ? 'dark' : 'light';
+        if (!stored || !stored.mode) {
+          theme.mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
         var root = document.documentElement;
         var accents = { red: '#E53935', amarillo: '#F4C430', azul: '#2C3E8F', naranja: '#E67E22', blanco: '#F5F0EB' };
-        root.style.setProperty('--color-red', accents[theme.accent] || '#E53935');
+        var accentHex = accents[theme.accent] || '#E53935';
+        root.style.setProperty('--color-red', '#E53935');
+        root.style.setProperty('--color-accent', accentHex);
         if (theme.mode === 'light') {
           root.style.setProperty('--bg-primary', '#F5F0EB');
           root.style.setProperty('--bg-secondary', '#FFFFFF');

@@ -5,18 +5,30 @@ import { covers } from '../data/content'
 
 export default function Covers() {
   const [compareMode, setCompareMode] = useState(false)
-  const [selected, setSelected] = useState<number[]>([])
+  const [selected, setSelected] = useState<string[]>([])
 
-  const toggleSelect = (idx: number) => {
+  const toggleCompareMode = () => {
+    setCompareMode(prev => !prev)
+    setSelected([])
+  }
+
+  const toggleSelect = (id: string) => {
     if (!compareMode) return
     setSelected(prev =>
-      prev.includes(idx) ? prev.filter(i => i !== idx) :
-      prev.length < 2 ? [...prev, idx] :
-      [prev[1], idx]
+      prev.includes(id) ? prev.filter(x => x !== id) :
+      prev.length < 2 ? [...prev, id] :
+      [prev[1], id]
     )
   }
 
   const clearCompare = () => { setSelected([]); setCompareMode(false) }
+
+  const getVisual = (idx: number) => ({
+    variant: ((idx % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7,
+    accentColor: 'var(--color-accent)',
+  })
+
+  const selectedItems = covers.filter(c => selected.includes(c.title))
 
   return (
     <main style={pageStyle}>
@@ -33,33 +45,36 @@ export default function Covers() {
       </section>
 
       <div style={styles.toolbar}>
-        <button onClick={() => setCompareMode(!compareMode)}
+        <button
+          onClick={toggleCompareMode}
+          aria-pressed={compareMode}
           style={{
             ...styles.compareBtn,
-            backgroundColor: compareMode ? 'var(--color-red)' : 'transparent',
+            backgroundColor: compareMode ? 'var(--color-accent)' : 'transparent',
             color: compareMode ? '#fff' : 'var(--text-secondary)',
-            borderColor: compareMode ? 'var(--color-red)' : 'var(--color-gray-light)',
+            borderColor: compareMode ? 'var(--color-accent)' : 'var(--color-gray-light)',
           }}
         >
           {compareMode ? 'Salir de comparación' : 'Comparar portadas'}
         </button>
         {compareMode && (
-          <span style={styles.compareHint}>
+          <span style={styles.compareHint} role="status" aria-live="polite">
             {selected.length === 0 ? 'Seleccioná 2 portadas para comparar' :
              selected.length === 1 ? 'Seleccioná una más' : ''}
           </span>
         )}
       </div>
 
-      {compareMode && selected.length === 2 ? (
-        <div style={styles.compareView}>
-          <button onClick={clearCompare} style={styles.closeCompare}>×</button>
-          {selected.map(i => {
-            const item = covers[i]
+      {compareMode && selectedItems.length === 2 ? (
+        <div style={styles.compareView} className="compare-grid">
+          <button onClick={clearCompare} style={styles.closeCompare} aria-label="Cerrar comparación">×</button>
+          {selectedItems.map(item => {
+            const originalIdx = covers.indexOf(item)
+            const { variant, accentColor } = getVisual(originalIdx)
             return (
-              <div key={i} style={styles.compareCard}>
+              <div key={item.title} style={styles.compareCard}>
                 <div style={styles.compareImage}>
-                  <RodchenkoArt variant={(i % 7) + 1} size={400} showTooltip />
+                  <RodchenkoArt variant={variant} size={400} showTooltip accentColor={accentColor} />
                 </div>
                 <div style={styles.compareInfo}>
                   <h3 style={styles.compareTitle}>{item.title}</h3>
@@ -74,45 +89,59 @@ export default function Covers() {
           })}
         </div>
       ) : (
-        <section style={styles.grid}>
-          {covers.map((item, i) => (
-            <GsapReveal key={item.title} delay={i * 0.05} variant="fadeUp">
-              <div
-                style={{
-                  ...styles.card,
-                  ...(compareMode && selected.includes(i) ? styles.cardSelected : {}),
-                  ...(compareMode && !selected.includes(i) && selected.length === 2 ? styles.cardDimmed : {}),
-                }}
-                data-hover
-                onClick={() => toggleSelect(i)}
-              >
-                <div style={styles.cardImage}>
-                  <RodchenkoArt variant={(i % 7) + 1} size={400} accentColor={
-                    ['#E53935','#F4C430','#2C3E8F','#E67E22','#F5F0EB','#E53935','#2C3E8F'][i % 7]
-                  } />
-                  <div style={styles.cornerTop} />
-                  <div style={styles.cornerBottom} />
-                  <span style={styles.yearTag}>{item.year}</span>
-                  {compareMode && (
-                    <span style={{
-                      ...styles.checkMark,
-                      backgroundColor: selected.includes(i) ? 'var(--color-red)' : 'rgba(0,0,0,0.5)',
-                    }}>
-                      {selected.includes(i) ? '✓' : '+'}
-                    </span>
-                  )}
-                </div>
-                <div style={styles.cardContent}>
-                  <h2 style={styles.cardTitle}>{item.title}</h2>
-                  <p style={styles.cardSubtitle}>{item.subtitle}</p>
-                  <p style={styles.cardDesc}>{item.description}</p>
-                  <div style={styles.tags}>
-                    {item.tags.map(t => <span key={t} style={styles.tag}>{t}</span>)}
+        <section style={styles.grid} className="covers-grid">
+          {covers.map((item, i) => {
+            const { variant, accentColor } = getVisual(i)
+            const isSelected = selected.includes(item.title)
+            const selectionOrder = selected.indexOf(item.title)
+            const isDimmed = compareMode && !isSelected && selected.length === 2
+
+            return (
+              <GsapReveal key={item.title} delay={i * 0.05} variant="fadeUp">
+                <div
+                  style={{
+                    ...styles.card,
+                    ...(isSelected ? styles.cardSelected : {}),
+                    ...(isDimmed ? styles.cardDimmed : {}),
+                  }}
+                  data-hover
+                  role={compareMode ? 'button' : undefined}
+                  tabIndex={compareMode ? 0 : undefined}
+                  aria-pressed={compareMode ? isSelected : undefined}
+                  onClick={() => toggleSelect(item.title)}
+                  onKeyDown={(e) => {
+                    if (compareMode && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault()
+                      toggleSelect(item.title)
+                    }
+                  }}
+                >
+                  <div style={styles.cardImage}>
+                    <RodchenkoArt variant={variant} size={400} accentColor={accentColor} />
+                    <div style={styles.cornerTop} />
+                    <div style={styles.cornerBottom} />
+                    <span style={styles.yearTag}>{item.year}</span>
+                    {compareMode && (
+                      <span style={{
+                        ...styles.checkMark,
+                        backgroundColor: isSelected ? 'var(--color-accent)' : 'rgba(0,0,0,0.5)',
+                      }}>
+                        {isSelected ? selectionOrder + 1 : '+'}
+                      </span>
+                    )}
+                  </div>
+                  <div style={styles.cardContent}>
+                    <h2 style={styles.cardTitle}>{item.title}</h2>
+                    <p style={styles.cardSubtitle}>{item.subtitle}</p>
+                    <p style={styles.cardDesc}>{item.description}</p>
+                    <div style={styles.tags}>
+                      {item.tags.map(t => <span key={t} style={styles.tag}>{t}</span>)}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </GsapReveal>
-          ))}
+              </GsapReveal>
+            )
+          })}
         </section>
       )}
     </main>
@@ -145,7 +174,7 @@ const styles: Record<string, React.CSSProperties> = {
   compareDesc: { fontFamily: 'var(--font-body)', fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: '1rem' },
   grid: { maxWidth: 'var(--container-max)', margin: '0 auto', padding: '3rem 1.5rem 5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2.5rem' },
   card: { backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--color-gray-light)', overflow: 'hidden', transition: 'transform 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease, opacity 0.3s ease', cursor: 'default' },
-  cardSelected: { borderColor: 'var(--color-red)', boxShadow: '0 0 0 2px var(--color-red)' },
+  cardSelected: { borderColor: 'var(--color-accent)', boxShadow: '0 0 0 2px var(--color-accent)' },
   cardDimmed: { opacity: 0.4 },
   cardImage: { aspectRatio: '3/4', position: 'relative', overflow: 'hidden' },
   cornerTop: { position: 'absolute', top: 0, left: 0, width: '40px', height: '40px', borderTop: '3px solid var(--color-red)', borderLeft: '3px solid var(--color-red)', zIndex: 1 },

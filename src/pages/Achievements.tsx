@@ -51,9 +51,9 @@ export default function Achievements() {
             <button key={c.key} onClick={() => setFilter(c.key)}
               style={{
                 ...styles.filterBtn,
-                backgroundColor: filter === c.key ? 'var(--color-red)' : 'transparent',
+                backgroundColor: filter === c.key ? 'var(--color-accent)' : 'transparent',
                 color: filter === c.key ? '#fff' : 'var(--text-secondary)',
-                borderColor: filter === c.key ? 'var(--color-red)' : 'var(--color-gray-light)',
+                borderColor: filter === c.key ? 'var(--color-accent)' : 'var(--color-gray-light)',
               }}
             >
               {c.label}
@@ -68,9 +68,9 @@ export default function Achievements() {
               <button key={d} onClick={() => setDecade(decade === d ? 0 : d)}
                 style={{
                   ...styles.decadeBtn,
-                  backgroundColor: decade === d ? 'var(--color-red)' : 'transparent',
+                  backgroundColor: decade === d ? 'var(--color-accent)' : 'transparent',
                   color: decade === d ? '#fff' : 'var(--text-secondary)',
-                  borderColor: decade === d ? 'var(--color-red)' : 'var(--color-gray-light)',
+                  borderColor: decade === d ? 'var(--color-accent)' : 'var(--color-gray-light)',
                 }}
               >
                 {d}s
@@ -91,7 +91,7 @@ export default function Achievements() {
             <ParallaxSection speed={0.1}>
               <div style={{ ...styles.card, flexDirection: i % 2 === 0 ? 'row' : 'row-reverse' } as React.CSSProperties}>
                 <div style={styles.cardImage}>
-                  <RodchenkoArt variant={(i % 7) + 1} size={400} interactive accentColor="var(--color-red)" showTooltip />
+                  <RodchenkoArt variant={((i % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7} size={400} interactive accentColor="var(--color-accent)" showTooltip />
                   <div style={styles.cardYearBadge}>{item.year}</div>
                 </div>
                 <div style={styles.cardContent}>
