@@ -1,32 +1,67 @@
-# Alexander Rodchenko — Web Constructivista
+# Александр Rodchenko
 
-Proyecto de diseño gráfico. Recurso adicional para la creación de folletos y afiches sobre la vida y obra de Alexander Rodchenko, pionero del constructivismo ruso.
+**Web interactiva — Constructivismo Ruso**
 
-Currently, two official plugins are available:
+Proyecto de diseño gráfico. Recurso adicional para la creación de folletos y afiches sobre la vida y obra de Alexander Rodchenko, pionero del constructivismo ruso, revolucionario del fotomontaje y diseñador gráfico que transformó el lenguaje visual del siglo XX.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✦ Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| | |
+|---|---|
+| **Framework** | React 19 + TypeScript |
+| **Build** | Vite 8 + Rolldown |
+| **Animaciones** | GSAP 3.15 + ScrollTrigger + MotionPathPlugin |
+| **Routing** | react-router-dom |
+| **SEO** | react-helmet-async + JSON-LD |
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## ✦ Sections
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+| Ruta | Página |
+|---|---|
+| `/` | Inicio — hero con animaciones extremas, contadores, quote |
+| `/logros` | Línea temporal filtrable por categoría y década |
+| `/aportes` | Grid de contribuciones con expansión por acento |
+| `/portadas` | Galería de portadas con modo comparación |
+| `/galeria` | Mosaico de obras con ScrollTrigger.batch |
+
+---
+
+## ✦ Animaciones
+
+- **Título**: caracteres vuelan desde posiciones aleatorias con blur, rotación y stagger random
+- **Descripción**: palabras con entrada 3D (rotationX + perspective) y back.out easing
+- **Elementos decorativos**: orbitan en MotionPathPlugin con respiración scale yoyó
+- **Mouse parallax**: layers siguen el cursor con interpelación GSAP
+- **Contadores**: animación con snap + barras de progreso
+- **Cita**: slash diagonal, quote mark con back.out, rotación 3D
+- **Reduced motion**: todo respeta `prefers-reduced-motion`
+
+---
+
+## ✦ Tematización
+
+- **Modo oscuro / claro** con detección del sistema
+- **5 acentos**: rojo, amarillo, azul, naranja, blanco
+- **Escala de fuente**: normal / grande
+- Persistencia en `localStorage` sin flash gracias al script inline en `index.html`
+
+---
+
+## ✦ Dev
+
+```bash
+npm install
+npm run dev       # servidor local
+npm run build     # tsc + vite build
+npm run lint      # oxlint
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## ✦ Licencia
+
+Proyecto educativo sin fines comerciales.
