@@ -1,8 +1,12 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import GsapReveal from '../components/GsapReveal'
 import RodchenkoArt from '../components/RodchenkoArt'
 import ParallaxSection from '../components/ParallaxSection'
 import { achievements, type AchievementCategory } from '../data/content'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const categories: { key: 'todas' | AchievementCategory; label: string }[] = [
   { key: 'todas', label: 'Todas' },
@@ -21,6 +25,7 @@ function parseYearRange(range: string): number {
 export default function Achievements() {
   const [filter, setFilter] = useState<'todas' | AchievementCategory>('todas')
   const [decade, setDecade] = useState(0)
+  const timelineRef = useRef<HTMLDivElement>(null)
 
   const filtered = useMemo(() => {
     const cat = filter === 'todas' ? achievements : achievements.filter(a => a.category === filter)
@@ -30,6 +35,25 @@ export default function Achievements() {
       return y >= decade && y < decade + 10
     })
   }, [filter, decade])
+
+  useEffect(() => {
+    const cards = timelineRef.current?.children
+    if (!cards || cards.length === 0) return
+    const ctx = gsap.context(() => {
+      Array.from(cards).forEach((card, i) => {
+        const dir = i % 2 === 0 ? -60 : 60
+        gsap.fromTo(card, { x: dir, opacity: 0 }, {
+          x: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse',
+          },
+        })
+      })
+    })
+    return () => ctx.revert()
+  }, [filtered])
 
   return (
     <main style={pageStyle}>
@@ -80,28 +104,26 @@ export default function Achievements() {
         </div>
       </div>
 
-      <section style={styles.timeline}>
+      <section ref={timelineRef} style={styles.timeline}>
         {filtered.length === 0 && (
           <p style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '4rem 0', fontFamily: 'var(--font-body)' }}>
             No hay logros en esta década para esta categoría.
           </p>
         )}
         {filtered.map((item, i) => (
-          <GsapReveal key={item.title} delay={i * 0.1} variant={i % 2 === 0 ? 'fadeLeft' : 'fadeRight'}>
-            <ParallaxSection speed={0.1}>
-              <div style={{ ...styles.card, flexDirection: i % 2 === 0 ? 'row' : 'row-reverse' } as React.CSSProperties}>
-                <div style={styles.cardImage}>
-                  <RodchenkoArt variant={((i % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7} size={400} interactive accentColor="var(--color-accent)" showTooltip />
-                  <div style={styles.cardYearBadge}>{item.year}</div>
-                </div>
-                <div style={styles.cardContent}>
-                  <span style={styles.cardYear}>{item.year}</span>
-                  <h2 style={styles.cardTitle}>{item.title}</h2>
-                  <p style={styles.cardDesc}>{item.description}</p>
-                </div>
+          <ParallaxSection key={item.title} speed={0.1}>
+            <div style={{ ...styles.card, flexDirection: i % 2 === 0 ? 'row' : 'row-reverse' } as React.CSSProperties}>
+              <div style={styles.cardImage}>
+                <RodchenkoArt variant={((i % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7} size={400} interactive accentColor="var(--color-accent)" showTooltip />
+                <div style={styles.cardYearBadge}>{item.year}</div>
               </div>
-            </ParallaxSection>
-          </GsapReveal>
+              <div style={styles.cardContent}>
+                <span style={styles.cardYear}>{item.year}</span>
+                <h2 style={styles.cardTitle}>{item.title}</h2>
+                <p style={styles.cardDesc}>{item.description}</p>
+              </div>
+            </div>
+          </ParallaxSection>
         ))}
       </section>
     </main>

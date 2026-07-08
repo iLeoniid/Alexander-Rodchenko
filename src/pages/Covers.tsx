@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import GsapReveal from '../components/GsapReveal'
 import RodchenkoArt from '../components/RodchenkoArt'
 import { covers } from '../data/content'
 
+gsap.registerPlugin(ScrollTrigger)
+
 export default function Covers() {
   const [compareMode, setCompareMode] = useState(false)
   const [selected, setSelected] = useState<string[]>([])
+  const gridRef = useRef<HTMLElement>(null)
 
   const toggleCompareMode = () => {
     setCompareMode(prev => !prev)
@@ -29,6 +34,23 @@ export default function Covers() {
   })
 
   const selectedItems = covers.filter(c => selected.includes(c.title))
+
+  useEffect(() => {
+    const cards = gridRef.current?.children
+    if (!cards || cards.length === 0) return
+    const ctx = gsap.context(() => {
+      gsap.fromTo(cards, { y: 60, opacity: 0 }, {
+        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
+        stagger: { each: 0.04, from: 'start' },
+        scrollTrigger: {
+          trigger: gridRef.current,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      })
+    })
+    return () => ctx.revert()
+  }, [])
 
   return (
     <main style={pageStyle}>
@@ -89,7 +111,7 @@ export default function Covers() {
           })}
         </div>
       ) : (
-        <section style={styles.grid} className="covers-grid">
+        <section ref={gridRef} style={styles.grid} className="covers-grid">
           {covers.map((item, i) => {
             const { variant, accentColor } = getVisual(i)
             const isSelected = selected.includes(item.title)
@@ -97,49 +119,48 @@ export default function Covers() {
             const isDimmed = compareMode && !isSelected && selected.length === 2
 
             return (
-              <GsapReveal key={item.title} delay={i * 0.05} variant="fadeUp">
-                <div
-                  style={{
-                    ...styles.card,
-                    ...(isSelected ? styles.cardSelected : {}),
-                    ...(isDimmed ? styles.cardDimmed : {}),
-                  }}
-                  data-hover
-                  role={compareMode ? 'button' : undefined}
-                  tabIndex={compareMode ? 0 : undefined}
-                  aria-pressed={compareMode ? isSelected : undefined}
-                  onClick={() => toggleSelect(item.title)}
-                  onKeyDown={(e) => {
-                    if (compareMode && (e.key === 'Enter' || e.key === ' ')) {
-                      e.preventDefault()
-                      toggleSelect(item.title)
-                    }
-                  }}
-                >
-                  <div style={styles.cardImage}>
-                    <RodchenkoArt variant={variant} size={400} accentColor={accentColor} />
-                    <div style={styles.cornerTop} />
-                    <div style={styles.cornerBottom} />
-                    <span style={styles.yearTag}>{item.year}</span>
-                    {compareMode && (
-                      <span style={{
-                        ...styles.checkMark,
-                        backgroundColor: isSelected ? 'var(--color-accent)' : 'rgba(0,0,0,0.5)',
-                      }}>
-                        {isSelected ? selectionOrder + 1 : '+'}
-                      </span>
-                    )}
-                  </div>
-                  <div style={styles.cardContent}>
-                    <h2 style={styles.cardTitle}>{item.title}</h2>
-                    <p style={styles.cardSubtitle}>{item.subtitle}</p>
-                    <p style={styles.cardDesc}>{item.description}</p>
-                    <div style={styles.tags}>
-                      {item.tags.map(t => <span key={t} style={styles.tag}>{t}</span>)}
-                    </div>
+              <div
+                key={item.title}
+                style={{
+                  ...styles.card,
+                  ...(isSelected ? styles.cardSelected : {}),
+                  ...(isDimmed ? styles.cardDimmed : {}),
+                }}
+                data-hover
+                role={compareMode ? 'button' : undefined}
+                tabIndex={compareMode ? 0 : undefined}
+                aria-pressed={compareMode ? isSelected : undefined}
+                onClick={() => toggleSelect(item.title)}
+                onKeyDown={(e) => {
+                  if (compareMode && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault()
+                    toggleSelect(item.title)
+                  }
+                }}
+              >
+                <div style={styles.cardImage}>
+                  <RodchenkoArt variant={variant} size={400} accentColor={accentColor} />
+                  <div style={styles.cornerTop} />
+                  <div style={styles.cornerBottom} />
+                  <span style={styles.yearTag}>{item.year}</span>
+                  {compareMode && (
+                    <span style={{
+                      ...styles.checkMark,
+                      backgroundColor: isSelected ? 'var(--color-accent)' : 'rgba(0,0,0,0.5)',
+                    }}>
+                      {isSelected ? selectionOrder + 1 : '+'}
+                    </span>
+                  )}
+                </div>
+                <div style={styles.cardContent}>
+                  <h2 style={styles.cardTitle}>{item.title}</h2>
+                  <p style={styles.cardSubtitle}>{item.subtitle}</p>
+                  <p style={styles.cardDesc}>{item.description}</p>
+                  <div style={styles.tags}>
+                    {item.tags.map(t => <span key={t} style={styles.tag}>{t}</span>)}
                   </div>
                 </div>
-              </GsapReveal>
+              </div>
             )
           })}
         </section>
