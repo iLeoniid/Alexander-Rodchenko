@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alexander Rodchenko — Constructivismo Ruso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Unbounded:wght@500;700;900&display=swap" rel="stylesheet" />
+    <script>
+      (function() {
+        var theme = { mode: 'dark', accent: 'red' };
+        try {
+          var stored = JSON.parse(localStorage.getItem('rodchenko-theme'));
+          if (stored && stored.accent) theme.accent = stored.accent;
+        } catch(e) {}
+        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme.mode = dark ? 'dark' : 'light';
+        var root = document.documentElement;
+        var accents = { red: '#E53935', amarillo: '#F4C430', azul: '#2C3E8F', naranja: '#E67E22', blanco: '#F5F0EB' };
+        root.style.setProperty('--color-red', accents[theme.accent] || '#E53935');
+        if (theme.mode === 'light') {
+          root.style.setProperty('--bg-primary', '#F5F0EB');
+          root.style.setProperty('--bg-secondary', '#FFFFFF');
+          root.style.setProperty('--text-primary', '#1A1A1A');
+          root.style.setProperty('--text-secondary', '#757575');
+          root.style.setProperty('--color-black', '#1A1A1A');
+          root.style.setProperty('--color-off-white', '#F5F0EB');
+        } else {
+          root.style.setProperty('--bg-primary', '#0D0D0D');
+          root.style.setProperty('--bg-secondary', '#1A1A1A');
+          root.style.setProperty('--text-primary', '#F5F0EB');
+          root.style.setProperty('--text-secondary', '#9E9E9E');
+          root.style.setProperty('--color-black', '#0D0D0D');
+          root.style.setProperty('--color-off-white', '#1A1A1A');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
