@@ -1,6 +1,6 @@
-# React + TypeScript + Vite
+# Alexander Rodchenko — Web Constructivista
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Proyecto de diseño gráfico. Recurso adicional para la creación de folletos y afiches sobre la vida y obra de Alexander Rodchenko, pionero del constructivismo ruso.
 
 Currently, two official plugins are available:
 
